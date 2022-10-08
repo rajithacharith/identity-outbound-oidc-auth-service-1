@@ -6,26 +6,31 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"strconv"
 	"strings"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/peer"
 
 	"wso2-enterprise/identity-outbound-oidc-auth-service/data"
 	pb "wso2-enterprise/identity-outbound-oidc-auth-service/outboundserver"
 )
 
 var (
-	tls        = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
-	certFile   = flag.String("cert_file", "", "The TLS cert file")
-	keyFile    = flag.String("key_file", "", "The TLS key file")
-	jsonDBFile = flag.String("json_db_file", "", "A json file containing a list of features")
-	port       = flag.Int("port", 50051, "The server port")
+	app_prop_file   = flag.String("app_prop_file", "", "The application properties file")
 )
 
 const (
 	LOGIN_TYPE string = "OIDC"
 	OAUTH2_PARAM_STATE string = "state"
+
+	// Application property names.
+	PORT = "server.port"
+	SERVER_CERT_PATH = "server.crt.path"
+	SERVER_KEY_PATH = "server.key.path"
+	SERVER_CA_CERTS_PATH = "server.ca.crts.path"
+	CLIENT_AUTH_ENABLED = "server.client.auth.enabled"
 )
 
 type OutboundOIDCService struct {
@@ -68,29 +73,45 @@ func getRequestParamsMap(requestParams []*pb.Request_RequestParam) map[string][]
 
 // }
 
+func logClientInfo(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+	// Log client tls info
+	if p, ok := peer.FromContext(ctx); ok {
+		if mtls, ok := p.AuthInfo.(credentials.TLSInfo); ok {
+			for _, item := range mtls.State.PeerCertificates {
+				log.Println("Request certificate subject : ", item.Subject)
+			}
+		}
+	}
+	return handler(ctx, req)
+}
+
 func main() {
 
 	flag.Parse()
-	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", *port))
+	if *app_prop_file == "" {
+		*app_prop_file = "application.properties"
+	}
+	serverProperties, err := data.ReadApplicationPropertiesFile(*app_prop_file)
+	port, err := strconv.Atoi(serverProperties[PORT])
+	serverCrtPath := serverProperties[SERVER_CERT_PATH]
+	serverKeyPath := serverProperties[SERVER_KEY_PATH]
+	clientCrtsPath := serverProperties[SERVER_CA_CERTS_PATH]
+	log.Printf("Client authentication is set to : %s", serverProperties[CLIENT_AUTH_ENABLED])
+	isClientAuthEnabled, err := strconv.ParseBool(serverProperties[CLIENT_AUTH_ENABLED])
+	credentials := data.LoadKeyPair(isClientAuthEnabled, serverCrtPath, serverKeyPath, clientCrtsPath)
+	opts := []grpc.ServerOption{grpc.Creds(credentials)}
+	if isClientAuthEnabled {
+		opts = []grpc.ServerOption{
+			grpc.Creds(credentials),
+			grpc.UnaryInterceptor(logClientInfo),
+		}	
+	}
+	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", port))
 	if (err != nil){
 		log.Fatalf("Failed to listen : %v", err)
 	}
-	var opts []grpc.ServerOption
-	if *tls {
-		if *certFile == "" {
-			*certFile = data.Path("x509/server_cert.pem")
-		}
-		if *keyFile == "" {
-			*keyFile = data.Path("x509/server_key.pem")
-		}
-		creds, err := credentials.NewServerTLSFromFile(*certFile, *keyFile)
-		if err != nil {
-			log.Fatalf("Failed to generate credentials %v", err)
-		}
-		opts = []grpc.ServerOption{grpc.Creds(creds)}
-	}
 	grpcServer := grpc.NewServer(opts...)
 	pb.RegisterOutboundOIDCServiceServer(grpcServer, &OutboundOIDCService{})
-	fmt.Println("GRPC server started!")
+	log.Println("GRPC server started!")
 	grpcServer.Serve(lis)
 }
