@@ -28,6 +28,6 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version-file: $GITHUB_WORKSPACE/go.mod
+          go-version-file: ${GITHUB_WORKSPACE}/go.mod
       - name: Build
-        run: go build $GITHUB_WORKSPACE/server/server.go
+        run: go build ${GITHUB_WORKSPACE}/server/server.go
