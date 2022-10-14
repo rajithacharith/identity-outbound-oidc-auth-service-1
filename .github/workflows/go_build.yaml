@@ -1,0 +1,33 @@
+# -------------------------------------------------------------------------------------
+#
+# Copyright (c) 2022, WSO2 LLC. (http://www.wso2.com). All Rights Reserved.
+#
+# This software is the property of WSO2 LLC. and its suppliers, if any.
+# Dissemination of any information or reproduction of any material contained
+# herein in any form is strictly forbidden, unless permitted by WSO2 expressly.
+# You may not alter or remove any copyright or other notice from copies of this content.
+#
+# --------------------------------------------------------------------------------------
+
+name: Release Go OIDC Outbound Service
+on:
+  push:
+    branches: [ go_impl ]
+
+  # Allows to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v2.3.3
+        with:
+          ref: go_impl
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version-file: $GITHUB_WORKSPACE/go.mod
+      - name: Build
+        run: go build $GITHUB_WORKSPACE/server/server.go
