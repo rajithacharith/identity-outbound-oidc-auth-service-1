@@ -33,5 +33,5 @@ jobs:
         run: go build -o outbound-server server/server.go
       - name: Release build
         run: |
-          echo "$GIT_TOKEN" | gh auth login --with-token
+          echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
           gh release create --title "GO OIDC - v11" v"$VERSION" outbound-server 
