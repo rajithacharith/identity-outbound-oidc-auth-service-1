@@ -26,7 +26,9 @@ jobs:
         with:
           ref: go_impl
       - name: Set env
-        run: echo "GIT_TAG=`echo $(git describe --tags --abbrev=0)`" >> $GITHUB_ENV
+        run: |
+          cd identity-outbound-oidc-auth-service-1
+          echo "GIT_TAG=`echo $(git describe --tags --abbrev=0)`" >> $GITHUB_ENV
       - name: Test
         run: |
           echo $GIT_TAG
