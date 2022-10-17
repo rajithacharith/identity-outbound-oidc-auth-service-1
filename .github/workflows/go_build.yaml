@@ -14,7 +14,7 @@ on:
   push:
     branches: [ go_impl ]
 
-  # Allows to run this workflow manually from the Actions tab
+  # Allows to run this workflow manually from the Actions
   workflow_dispatch:
 
 jobs:
