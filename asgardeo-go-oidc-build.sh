@@ -10,11 +10,18 @@ GIT_TOKEN=$2
 
 # Check relevant packages are available
 command -v jq >/dev/null 2>&1 || { echo >&2 "Error: $0 script requires 'jq' for JSON Processing.  Aborting as not found."; exit 1; }
-command -v gh >/dev/null 2>&1 || { echo >&2 "Error: $0 script requires 'gh' to call GitHub APIs.  Aborting as not found."; exit 1; } 
+command -v gh >/dev/null 2>&1 || { echo >&2 "Error: $0 script requires 'gh' to call GitHub APIs.  Aborting as not found."; exit 1; }
+command -v go >/dev/null 2>&1 || { echo >&2 "Error: $0 script requires 'go' to build the artifact.  Aborting as not found."; exit 1; } 
+
 
 VERSION=$(cat version.txt)
 echo $VERSION
 GIT_USERNAME='wso2-iam-cloud-bot'
+
+go build -o outbound-server server/server.go
+
+echo $GIT_TOKEN | gh auth login --with-token
+gh release create --title "GO OIDC -"$VERSION outbound-server
 
 incrementPackVersion() {
     old_version=$1
