@@ -7,7 +7,11 @@ set -o pipefail
 # Variables
 REPO_DIR=$1
 GIT_TOKEN=$2
-git fetch --all --tags
+git fetch --tags
+# This suppress an error occurred when the repository is a complete one.
+git fetch --prune --unshallow || true
+latest_tag=$(git describe --abbrev=0 --tags || true)
+echo latest_tag
 echo $(ls)
 echo $(git describe --tags --abbrev=0 --always)
 cd $REPO_DIR
