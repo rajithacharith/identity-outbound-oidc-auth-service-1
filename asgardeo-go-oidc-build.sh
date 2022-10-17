@@ -9,10 +9,10 @@ REPO_DIR=$1
 GIT_TOKEN=$2
 git fetch --all --tags
 echo $(ls)
-echo $(git describe --tags --abbrev=0)
+echo $(git describe --tags --abbrev=0 --always)
 cd $REPO_DIR
 echo $(ls)
-VERSION=$(echo $(git describe --tags --abbrev=0))
+VERSION=$(echo $(git describe --tags --abbrev=0 --always))
 ASGARDEO_DOCS_NAME=asgardeo-docs-$VERSION
 GIT_USERNAME=''
 
