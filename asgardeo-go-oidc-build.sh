@@ -8,6 +8,7 @@ set -o pipefail
 REPO_DIR=$1
 GIT_TOKEN=$2
 echo $(ls)
+echo $(git describe --tags --abbrev=0)
 cd $REPO_DIR
 echo $(ls)
 VERSION=$(echo $(git describe --tags --abbrev=0))
