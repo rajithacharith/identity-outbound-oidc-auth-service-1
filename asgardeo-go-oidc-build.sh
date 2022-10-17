@@ -30,7 +30,7 @@ go build -o outbound-server server/server.go
 
 echo "Creating release for version - "$VERSION
 echo $GIT_TOKEN | gh auth login --with-token
-gh release create --target "go_impl" --title "Outbound OIDC Auth Service - v"$VERSION  -n "" "go.v"$VERSION \
+gh release create --target "go_impl" --title "Outbound OIDC Auth Service [Go lang] - v"$VERSION  -n "" "go.v"$VERSION \
     $REPO_DIR/outbound-server#outbound-server
 
 # Method to increment minor version
