@@ -13,6 +13,8 @@ name: Release Go OIDC Outbound Service
 on:
   push:
     branches: [ go_impl ]
+    paths-ignore:
+      - 'version.txt'
 
   # Allows to run this workflow manually from the Actions 
   workflow_dispatch:
