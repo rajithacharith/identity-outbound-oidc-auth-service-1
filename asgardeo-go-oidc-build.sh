@@ -28,6 +28,7 @@ command -v go >/dev/null 2>&1 || { echo >&2 "Error: $0 script requires 'go' to b
 # Go Build command.
 go build -o outbound-server server/server.go
 
+echo "Creating release for version - "$VERSION
 echo $GIT_TOKEN | gh auth login --with-token
 gh release create --title "GO OIDC -"$VERSION outbound-server
 
