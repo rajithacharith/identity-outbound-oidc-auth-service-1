@@ -43,7 +43,7 @@ NEW_OIDC_OUTBOUND_GO_SERVER_VERSION=$(incrementPackVersion "$VERSION")
 echo "Next OIDC Outbound Server in Go lang version: $NEW_OIDC_OUTBOUND_GO_SERVER_VERSION"
 
 # Update version.txt file.
-sed -i 's|'"${VERSION}"'|'"${NEW_ASGARDEO_DOCS_VERSION}"'|' version.txt
+sed -i 's|'"${VERSION}"'|'"${NEW_OIDC_OUTBOUND_GO_SERVER_VERSION}"'|' version.txt
 
 #Commit and push updated version.txt file.
 git -C "$REPO_DIR" config user.name "$GIT_USERNAME"
@@ -51,5 +51,5 @@ git -C "$REPO_DIR" config user.email "iam-cloud@wso2.com"
 git -C "$REPO_DIR" pull
 
 git -C "$REPO_DIR" add "version.txt"
-git -C "$REPO_DIR" commit -m "Updating version to $NEW_ASGARDEO_DOCS_VERSION"
+git -C "$REPO_DIR" commit -m "Updating version to $NEW_OIDC_OUTBOUND_GO_SERVER_VERSION"
 git -C "$REPO_DIR" push
