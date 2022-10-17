@@ -7,6 +7,7 @@ set -o pipefail
 # Variables
 REPO_DIR=$1
 GIT_TOKEN=$2
+git fetch --all --tags
 echo $(ls)
 echo $(git describe --tags --abbrev=0)
 cd $REPO_DIR
