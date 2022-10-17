@@ -33,6 +33,8 @@ func Path(rel string) string {
 	return filepath.Join(basepath, rel)
 }
 
+// Read application properties file from the given path.
+// Returns a map of property name value pairs.
 func ReadApplicationPropertiesFile(app_prop_file string) (map[string]string, error) {
 
 	appPropFile := Path(app_prop_file)
@@ -60,10 +62,13 @@ func ReadApplicationPropertiesFile(app_prop_file string) (map[string]string, err
 		return nil, err
 	}
 	return appProps, nil
-} 
+}
 
-func LoadKeyPair(isClientAuthEnabled bool, serverCrtPath string, serverKeyPath string,  clientCertsPath string) credentials.TransportCredentials {
-	
+// Creates and returns the TLS config for the server.
+// Uses the .crt and .key files provided as the server key, server cert and client certs.
+// Returns MTLS config if `isClientAuthEnabled` is set to true.
+func GetServerTLSConfig(isClientAuthEnabled bool, serverCrtPath string, serverKeyPath string, clientCertsPath string) credentials.TransportCredentials {
+
 	certificate, err := tls.LoadX509KeyPair(Path(serverCrtPath), Path(serverKeyPath))
 	if err != nil {
 		panic("Error while loading server credentials: " + err.Error())
@@ -88,10 +93,10 @@ func LoadKeyPair(isClientAuthEnabled bool, serverCrtPath string, serverKeyPath s
 	}
 
 	tlsConfig = &tls.Config{
-		ClientAuth: tls.RequireAndVerifyClientCert,
+		ClientAuth:   tls.RequireAndVerifyClientCert,
 		Certificates: []tls.Certificate{certificate},
-		ClientCAs: capool,
+		ClientCAs:    capool,
 	}
-	
+
 	return credentials.NewTLS(tlsConfig)
 }

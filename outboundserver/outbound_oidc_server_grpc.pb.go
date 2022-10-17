@@ -23,6 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OutboundOIDCServiceClient interface {
 	CanHandle(ctx context.Context, in *Request, opts ...grpc.CallOption) (*CanHandleResponse, error)
+	InitiateAuthentication(ctx context.Context, in *InitAuthRequest, opts ...grpc.CallOption) (*InitAuthResponse, error)
+	ProcessAuthenticationResponse(ctx context.Context, in *ProcessAuthRequest, opts ...grpc.CallOption) (*ProcessAuthResponse, error)
 }
 
 type outboundOIDCServiceClient struct {
@@ -42,11 +44,31 @@ func (c *outboundOIDCServiceClient) CanHandle(ctx context.Context, in *Request, 
 	return out, nil
 }
 
+func (c *outboundOIDCServiceClient) InitiateAuthentication(ctx context.Context, in *InitAuthRequest, opts ...grpc.CallOption) (*InitAuthResponse, error) {
+	out := new(InitAuthResponse)
+	err := c.cc.Invoke(ctx, "/OutboundOIDCService/InitiateAuthentication", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *outboundOIDCServiceClient) ProcessAuthenticationResponse(ctx context.Context, in *ProcessAuthRequest, opts ...grpc.CallOption) (*ProcessAuthResponse, error) {
+	out := new(ProcessAuthResponse)
+	err := c.cc.Invoke(ctx, "/OutboundOIDCService/ProcessAuthenticationResponse", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OutboundOIDCServiceServer is the server API for OutboundOIDCService service.
 // All implementations must embed UnimplementedOutboundOIDCServiceServer
 // for forward compatibility
 type OutboundOIDCServiceServer interface {
 	CanHandle(context.Context, *Request) (*CanHandleResponse, error)
+	InitiateAuthentication(context.Context, *InitAuthRequest) (*InitAuthResponse, error)
+	ProcessAuthenticationResponse(context.Context, *ProcessAuthRequest) (*ProcessAuthResponse, error)
 	mustEmbedUnimplementedOutboundOIDCServiceServer()
 }
 
@@ -56,6 +78,12 @@ type UnimplementedOutboundOIDCServiceServer struct {
 
 func (UnimplementedOutboundOIDCServiceServer) CanHandle(context.Context, *Request) (*CanHandleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CanHandle not implemented")
+}
+func (UnimplementedOutboundOIDCServiceServer) InitiateAuthentication(context.Context, *InitAuthRequest) (*InitAuthResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method InitiateAuthentication not implemented")
+}
+func (UnimplementedOutboundOIDCServiceServer) ProcessAuthenticationResponse(context.Context, *ProcessAuthRequest) (*ProcessAuthResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProcessAuthenticationResponse not implemented")
 }
 func (UnimplementedOutboundOIDCServiceServer) mustEmbedUnimplementedOutboundOIDCServiceServer() {}
 
@@ -88,6 +116,42 @@ func _OutboundOIDCService_CanHandle_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OutboundOIDCService_InitiateAuthentication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InitAuthRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OutboundOIDCServiceServer).InitiateAuthentication(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/OutboundOIDCService/InitiateAuthentication",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OutboundOIDCServiceServer).InitiateAuthentication(ctx, req.(*InitAuthRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OutboundOIDCService_ProcessAuthenticationResponse_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ProcessAuthRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OutboundOIDCServiceServer).ProcessAuthenticationResponse(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/OutboundOIDCService/ProcessAuthenticationResponse",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OutboundOIDCServiceServer).ProcessAuthenticationResponse(ctx, req.(*ProcessAuthRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OutboundOIDCService_ServiceDesc is the grpc.ServiceDesc for OutboundOIDCService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -98,6 +162,14 @@ var OutboundOIDCService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CanHandle",
 			Handler:    _OutboundOIDCService_CanHandle_Handler,
+		},
+		{
+			MethodName: "InitiateAuthentication",
+			Handler:    _OutboundOIDCService_InitiateAuthentication_Handler,
+		},
+		{
+			MethodName: "ProcessAuthenticationResponse",
+			Handler:    _OutboundOIDCService_ProcessAuthenticationResponse_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

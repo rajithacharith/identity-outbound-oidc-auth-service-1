@@ -1,5 +1,7 @@
 syntax = "proto3";
 option go_package = "wso2-enterprise/identity-outbound-oidc-auth-service/outboundserver";
+option java_package = "com.wso2.identity.outbound.oidc.auth.service.rpc";
+option java_multiple_files = true;
 
 message Request {
 
@@ -19,50 +21,50 @@ message CanHandleResponse {
   bool canHandle = 1;
 }
 
-// message AuthenticationContext {
+message AuthenticationContext {
 
-//   string contextIdentifier = 1;
-//   map<string, string> authenticatorProperties = 2;
-//   map<string, string> authenticatorParams = 3;
-//   map<string, string> contextProperties = 4;
-// }
+  string contextIdentifier = 1;
+  map<string, string> authenticatorProperties = 2;
+  map<string, string> authenticatorParams = 3;
+  map<string, string> contextProperties = 4;
+}
 
-// message InitAuthRequest {
+message InitAuthRequest {
 
-//   AuthenticationContext authenticationContext = 1;
-//   Request request = 2;
-// }
+  AuthenticationContext authenticationContext = 1;
+  Request request = 2;
+}
 
-// message InitAuthResponse {
+message InitAuthResponse {
 
-//   bool isRedirect = 1;
-//   string redirectUrl = 2;
-// }
+  bool isRedirect = 1;
+  string redirectUrl = 2;
+}
 
-// message ProcessAuthRequest {
+message ProcessAuthRequest {
 
-//   AuthenticationContext authenticationContext = 1;
-//   Request request = 2;
-// }
+  AuthenticationContext authenticationContext = 1;
+  Request request = 2;
+}
 
-// message ProcessAuthResponse {
+message ProcessAuthResponse {
 
-//   string authenticationStatus = 1;
-//   AuthenticatedUser authenticatedUser = 2;
-//   map<string, string> authenticationData = 3;
-// }
+  string authenticationStatus = 1;
+  AuthenticatedUser authenticatedUser = 2;
+  map<string, string> authenticationData = 3;
+}
 
-// message AuthenticatedUser {
+message AuthenticatedUser {
 
-//   bool isFederatedUser = 1;
-//   map<string, string> userAttributes = 2;
-// }
+  bool isFederatedUser = 1;
+  map<string, string> userAttributes = 2;
+}
 
 service OutboundOIDCService {
 
   rpc CanHandle(Request) returns (CanHandleResponse);
 
-//   rpc initiateAuthentication(InitAuthRequest) returns (InitAuthResponse);
+  rpc InitiateAuthentication(InitAuthRequest) returns (InitAuthResponse);
 
-//   rpc processAuthenticationResponse(ProcessAuthRequest) returns (ProcessAuthResponse);
+  rpc ProcessAuthenticationResponse(ProcessAuthRequest) returns (ProcessAuthResponse);
 }
