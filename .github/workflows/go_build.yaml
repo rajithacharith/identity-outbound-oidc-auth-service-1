@@ -14,7 +14,7 @@ on:
   push:
     branches: [ go_impl ]
 
-  # Allows to run this workflow manually from the Actionsss
+  # Allows to run this workflow manually from the Actions 
   workflow_dispatch:
 
 jobs:
@@ -26,9 +26,11 @@ jobs:
         with:
           ref: go_impl
       - name: Set env
-        run: |
-          EVENT_DATA=$(cat $GITHUB_EVENT_PATH)
-          echo $EVENT_DATA | jq .
+        run: echo "GIT_TAG=`echo $(git describe --tags --abbrev=0)`" >> $GITHUB_ENV
+      - name: Build and Release version
+        env:
+          ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash asgardeo-go-oidc-build.sh $GITHUB_WORKSPACE $ACCESS_TOKEN
       # - name: Setup Go
       #   uses: actions/setup-go@v3
       #   with:
