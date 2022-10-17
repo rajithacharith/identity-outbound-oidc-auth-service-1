@@ -7,7 +7,9 @@ set -o pipefail
 # Variables
 REPO_DIR=$1
 GIT_TOKEN=$2
+echo $(ls)
 cd $REPO_DIR
+echo $(ls)
 VERSION=$(echo $(git describe --tags --abbrev=0))
 ASGARDEO_DOCS_NAME=asgardeo-docs-$VERSION
 GIT_USERNAME='wso2-iam-cloud-bot'
