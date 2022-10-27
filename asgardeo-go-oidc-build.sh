@@ -52,4 +52,5 @@ git -C "$REPO_DIR" pull
 
 git -C "$REPO_DIR" add "version.txt"
 git -C "$REPO_DIR" commit -m "Updating version to $NEW_OIDC_OUTBOUND_GO_SERVER_VERSION"
-git -C "$REPO_DIR" push
+
+gh pr create --fill
