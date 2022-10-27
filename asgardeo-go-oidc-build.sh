@@ -54,4 +54,4 @@ git -C "$REPO_DIR" add "version.txt"
 git -C "$REPO_DIR" commit -m "Updating version to $NEW_OIDC_OUTBOUND_GO_SERVER_VERSION"
 git push origin temporary-version-bump
 
-gh pr create --fill 
+gh pr create --fill --base go_impl
