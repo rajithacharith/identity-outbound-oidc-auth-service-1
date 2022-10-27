@@ -41,7 +41,7 @@ incrementPackVersion() {
 
 NEW_OIDC_OUTBOUND_GO_SERVER_VERSION=$(incrementPackVersion "$VERSION")
 echo "Next OIDC Outbound Server in Go lang version: $NEW_OIDC_OUTBOUND_GO_SERVER_VERSION"
-git checkout -b temporary-version-bump
+git checkout -b temporary-version-bump origin/go_impl
 # Update version.txt file.
 sed -i 's|'"${VERSION}"'|'"${NEW_OIDC_OUTBOUND_GO_SERVER_VERSION}"'|' version.txt
 
