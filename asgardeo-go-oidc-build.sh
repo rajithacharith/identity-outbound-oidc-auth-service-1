@@ -45,7 +45,7 @@ git checkout -b temporary-version-bump origin/go_impl
 # Update version.txt file.
 sed -i 's|'"${VERSION}"'|'"${NEW_OIDC_OUTBOUND_GO_SERVER_VERSION}"'|' version.txt
 
-#Commit and push updated version.txt file..
+#Commit and push updated version.txt file...
 git -C "$REPO_DIR" config user.name "$GIT_USERNAME"
 git -C "$REPO_DIR" config user.email "iam-cloud@wso2.com"
 git -C "$REPO_DIR" pull
